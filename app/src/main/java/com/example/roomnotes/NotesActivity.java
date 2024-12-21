@@ -1,11 +1,14 @@
 package com.example.roomnotes;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.RadioGroup;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,9 +34,12 @@ public class NotesActivity extends AppCompatActivity {
     private TextView titleTextView;
     private Button logoutButton;
     private FloatingActionButton addNoteButton;
+    private SearchView searchView;
 
     private RecyclerView recyclerView;
     private NoteAdapter adapter;
+
+    private List<Note> notesList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +56,7 @@ public class NotesActivity extends AppCompatActivity {
         logoutButton = findViewById(R.id.btn_logout);
         addNoteButton = findViewById(R.id.fab_add_note);
         recyclerView = findViewById(R.id.rv_notes);
+        searchView = findViewById(R.id.sv);
 
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         adapter = new NoteAdapter(new ArrayList<>());
@@ -78,8 +85,6 @@ public class NotesActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        getNotes();
-
         RadioGroup rgLayout = findViewById(R.id.rg_layout);
         rgLayout.setOnCheckedChangeListener((group, checkedId) -> {
             RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
@@ -90,6 +95,20 @@ public class NotesActivity extends AppCompatActivity {
                 layoutManager = new LinearLayoutManager(this);
             }
             recyclerView.setLayoutManager(layoutManager);
+        });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchView.clearFocus();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                searchNotes(newText);
+                return true;
+            }
         });
     }
 
@@ -116,6 +135,7 @@ public class NotesActivity extends AppCompatActivity {
             } else {
                 // Display notes
                 adapter.setNotes(notes);
+                notesList = notes;
             }
         }
     }
@@ -123,6 +143,24 @@ public class NotesActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if(searchView != null) {
+            searchView.setQuery("", false);
+            searchView.clearFocus();
+        }
         getNotes();
+    }
+
+    private void searchNotes(String query) {
+        if(notesList == null) {
+            return;
+        }
+
+        List<Note> filteredNotes = new ArrayList<>();
+        for (Note note : notesList) {
+            if (note.title.toLowerCase().contains(query.toLowerCase()) || note.content.toLowerCase().contains(query.toLowerCase())) {
+                filteredNotes.add(note);
+            }
+        }
+        adapter.setNotes(filteredNotes);
     }
 }

@@ -32,11 +32,20 @@
                 android:text="Log Out" />
         </LinearLayout>
 
+        <SearchView
+            android:id="@+id/sv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ll"
+            android:queryHint="Search here..."
+            android:iconifiedByDefault="false"
+            android:layout_margin="8dp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/ll_2"
-            android:layout_below="@id/ll"
+            android:layout_below="@id/sv"
             android:orientation="horizontal"
             android:paddingHorizontal="16dp">
             <RadioGroup
