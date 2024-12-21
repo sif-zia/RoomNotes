@@ -65,7 +65,8 @@ public class NotesActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
         String name = sharedPreferences.getString("name", "");
 
-        titleTextView.setText("Welcome, " + name.substring(0, name.indexOf(' ')) + "!");
+        String greeting = "Welcome, " + name.substring(0, name.indexOf(' ')) + "!";
+        titleTextView.setText(greeting);
 
         logoutButton.setOnClickListener(v -> {
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -76,7 +77,7 @@ public class NotesActivity extends AppCompatActivity {
             editor.apply();
 
             Intent intent = new Intent(NotesActivity.this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         });
 
